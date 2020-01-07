@@ -1,0 +1,11 @@
+[Unit]
+Description=MyTelegramBot
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python /home/pi/pyprojects/sitbot/sitbot.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
