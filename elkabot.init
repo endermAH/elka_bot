@@ -1,10 +1,10 @@
 [Unit]
-Description=MyTelegramBot
+Description=MyElkaBot
 After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/usr/bin/python /home/pi/pyprojects/sitbot/sitbot.py
+ExecStart=/usr/bin/python /home/bots/elka_bot/main.py
 Restart=always
 
 [Install]
