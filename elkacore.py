@@ -39,6 +39,52 @@ class Elochka:
     def __causeError(self, error, data):
         self.log('ERROR', error + '\nResponce: ' + str(data))
 
+    def __stageUpObject(self, object):
+        sgin = {
+            'winterMaiden': '6051a859ba82429570bf8fe7fed4d729'
+        }
+
+        url = 'https://elka2020-server-vk.ereality.org/object/stageUp'
+        headers = self.mainHeaders
+        headers.update({
+            'Content-Length': '266',
+            'Referer': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=6b242ea2cb97bb00f6044a70ca21757a1e772092bc08d2c4bfb39905464e09015ce92031a3d9b793de9cc&secret=dd30cb295a&access_token=4c5db7a80c4f27b495d398fa081935ac77092992c9078570d71b097149abca31232441e27d12f89d148f7&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_11c2bc5d4b01bb73ee&referrer=unknown&lc_name=dade34fa&platform=web&hash='
+        })
+
+        data = '{"params":{"objectName":"' + object + '"},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign[object] + '"}'
+
+        r = requests.post(url, data=data, headers=headers)
+        r = r.json()
+
+        error = ''
+
+        if ('data' in r):
+            if ('award' in r['data']):
+                if ('resource' in r['data']['award']):
+                    if ('energy' in r['data']['award']['resource']):
+                        collected = r['data']['award']['resource']['money1'] #Hardcoded award attention!
+                    else:
+                        error += 'Snow error'
+                else:
+                     error += 'Resource error'
+            else:
+                 error += 'Award error'
+        else:
+            error += 'Data error'
+
+        if (error != ''):
+            self.__causeError(error, r)
+
+        resp = {
+            'collected': collected
+        }
+
+        self.log('TEST', r)
+        message = 'Object ' + object + ' staged up'
+        self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+
     def log(self, type, msg):
 
         LOG_TYPE = {
@@ -169,8 +215,8 @@ class Elochka:
         return data
 
     def useEnergyOnce(self):
-        count = 20
-        sign = '6668935bc568b6944fa998e2e90516fa'
+        count = 45
+        sign = '35107974142b57ddefaa3cee0991d0eb'
         url = 'https://elka2020-server-vk.ereality.org/object/useEnergy'
         headers = self.mainHeaders
         headers.update({
@@ -178,15 +224,25 @@ class Elochka:
             'Referer': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=2&sid=c2025445a0ea4177c651f75667fff7faa940972eb9cc945ac89a6b0a6d2ab4d7eb2ad22b57c892365c6a7&secret=6888e61788&access_token=d82aa377a093f25422e4057f99108704c7ff532c9db51304fb1e15a4b2143dea6710275362c26d466e23c&user_id=225299625&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_4d9f4d4083fdfa1e36&referrer=unknown&lc_name=8daf2b67&platform=web&hash=',
         })
 
-        data = '{"params":{"objectName":"winterMaiden","count":' + str(count) + ',"window":1},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":18,"clientPlatform":"js","sign":"' + sign + '"}'
-        # print(data)
+        data = '{"params":{"objectName":"winterMaiden","count":' + str(count) + ',"window":1},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign + '"}'
+
         r = requests.post(url, data=data, headers=headers)
         r = r.json()
-        print(r)
-        data = {
-            'get': r,
+
+        if ('op' in r):
+            currentEnergy = self.__parceOpEnergy(r['op'])
+        else:
+            self.__causeError('No "op" field in responce', r)
+            currentEnergy = 'unknown'
+
+        resp = {
+            # 'get': r,
+            'r': r,
+            'currentEnergy': currentEnergy
         }
-        return data
+
+        self.log('SUCCESS', 'Spent ' + str(count) + ' energy. Current energy: ' + str(currentEnergy))
+        return resp
 
     def useEnergy(self, count):
         used = 0
@@ -229,7 +285,7 @@ class Elochka:
             message = 'I\'ve tried to open the chest, but there is no award :('
             self.log('WARNING', message)
         else:
-            massage = 'I\'ve opened the chest: \n\r Snow:' + str(resp['award']['resource']['money1']) + '\n\r Energy: ' + str(resp['award']['resource']['energy']) + '\n\r Diamonds: ' + str(resp['award']['resource']['cash']) + '\n\r Keys: ' + str(resp['award']['resource']['keys'])
+            message = 'I\'ve opened the chest: \n\r Snow:' + str(resp['award']['resource']['money1']) + '\n\r Energy: ' + str(resp['award']['resource']['energy']) + '\n\r Diamonds: ' + str(resp['award']['resource']['cash']) + '\n\r Keys: ' + str(resp['award']['resource']['keys'])
             self.log('SUCCESS', message)
         self.notifyMe(message)
 
