@@ -27,8 +27,7 @@ class Elochka:
         return 'unknown'
 
     def __causeError(self, error, data):
-        print('Elka ERROR caused: ' + error + '\nData: ')
-        print(data)
+        self.log('ERROR', error + '\nResponce: ' + str(data))
 
     def log(self, type, msg):
 
@@ -108,12 +107,17 @@ class Elochka:
             self.__causeError('No "op" field in responce', r)
             currentEnergy = 'unknown'
 
-        data = {
+        resp = {
             'collected': collected,
             'currentEnergy': currentEnergy,
-            'hasErrors': (error != 'False')
+            'hasErrors': (error != '')
         }
-        return data
+
+        message = 'I collected ' + str(resp['collected']) + ' energy.\n\r Now there is ' + str(resp['currentEnergy']) + ' energy'
+        self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+        return resp
 
     def totalExchange(self, resource):
         referer = {
@@ -200,13 +204,23 @@ class Elochka:
             if ('award' in r['data']):
                  award = r['data']['award']
             else:
-                award = 'no award'
+                award = 'No award in open chest responce!'
         else:
-            award = 'no data'
+            award = 'No data in open chest responce!'
             self.__causeError(award, r)
 
-        data = {
+        resp = {
             'award': award,
             'r': r
         }
-        return data
+
+        self.log('TEST', resp)
+        if (resp['award'] == 'No award in open chest responce!' or resp['award'] == 'No data in open chest responce!'):
+            message = 'I\'ve tried to open the chest, but there is no award :('
+            self.log('WARNING', message)
+        else:
+            massage = 'I\'ve opened the chest: \n\r Snow:' + str(resp['award']['resource']['money1']) + '\n\r Energy: ' + str(resp['award']['resource']['energy']) + '\n\r Diamonds: ' + str(resp['award']['resource']['cash']) + '\n\r Keys: ' + str(resp['award']['resource']['keys'])
+            self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+        return resp
