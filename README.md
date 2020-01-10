@@ -1,7 +1,7 @@
 ### Main configurations
 
 #### Start session
-To start session you should start playing game. Catch `init` request or any other request to `elka2020-server-vk.ereality.org`.
+To start session you should start playing game. Catch `init` request or any other request to `elka2020-server-vk.ereality.org` to get `session_key`.
 
 #### Sign
 Every method has a `sign` parameter. You can get it by catching requests that appropriate methods. *Be careful, in `useEnergy()` method you should hold count of energy too.*
