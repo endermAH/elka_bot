@@ -8,6 +8,7 @@ class Elochka:
     version = '19'
     logfile = 'LOG FILE'
     secretoryToken = ''
+    myId = '225299625'
 
     mainHeaders = {
         'Host': 'elka2020-server-vk.ereality.org',
@@ -53,7 +54,7 @@ class Elochka:
 
     def notifyMe(self, msg):
         random_id = random.randrange(0,100000,1)
-        url = 'https://api.vk.com/method/messages.send?peer_id=225299625&random_id=' + str(random_id) + '&message=' + msg + '&access_token=' + self.secretoryToken + '&v=5.103'
+        url = 'https://api.vk.com/method/messages.send?peer_id=' + self.myId + '&random_id=' + str(random_id) + '&message=' + msg + '&access_token=' + self.secretoryToken + '&v=5.103'
         responce = requests.get(url)
         print(responce.content)
 
