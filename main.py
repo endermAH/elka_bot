@@ -221,7 +221,7 @@ while (True):
     print(message)
     el.notifyMe(message)
 
-    time.sleep(60*60*4)
+    time.sleep(60*60*4+60)
 
 
 # responce.json()
