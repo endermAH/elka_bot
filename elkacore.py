@@ -39,8 +39,8 @@ class Elochka:
     def __causeError(self, error, data):
         self.log('ERROR', error + '\nResponce: ' + str(data))
 
-    def __stageUpObject(self, object):
-        sgin = {
+    def stageUpObject(self, object):
+        sign = {
             'winterMaiden': '6051a859ba82429570bf8fe7fed4d729'
         }
 
@@ -58,10 +58,14 @@ class Elochka:
 
         error = ''
 
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            return r['error']['text']
+
         if ('data' in r):
             if ('award' in r['data']):
                 if ('resource' in r['data']['award']):
-                    if ('energy' in r['data']['award']['resource']):
+                    if ('money1' in r['data']['award']['resource']):
                         collected = r['data']['award']['resource']['money1'] #Hardcoded award attention!
                     else:
                         error += 'Snow error'
@@ -80,10 +84,11 @@ class Elochka:
         }
 
         self.log('TEST', r)
-        message = 'Object ' + object + ' staged up'
-        self.log('SUCCESS', message)
-        self.notifyMe(message)
 
+        if ((not ('error' in r)) and (error == '')):
+            message = 'Object ' + object + ' staged up'
+            self.log('SUCCESS', message)
+            self.notifyMe(message)
 
     def log(self, type, msg):
 
@@ -139,6 +144,10 @@ class Elochka:
 
         error = ''
         collected = '0'
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            return r['error']['text']
 
         if ('data' in r):
             if ('award' in r['data']):
@@ -229,6 +238,12 @@ class Elochka:
         r = requests.post(url, data=data, headers=headers)
         r = r.json()
 
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            if (r['error']['text'] == 'object wait a new level'):
+                self.stageUpObject('winterMaiden')
+            return False
+
         if ('op' in r):
             currentEnergy = self.__parceOpEnergy(r['op'])
         else:
@@ -236,9 +251,8 @@ class Elochka:
             currentEnergy = 'unknown'
 
         resp = {
-            # 'get': r,
             'r': r,
-            'currentEnergy': currentEnergy
+            'currentEnergy': currentEnergy,
         }
 
         self.log('SUCCESS', 'Spent ' + str(count) + ' energy. Current energy: ' + str(currentEnergy))
@@ -265,6 +279,12 @@ class Elochka:
         data = '{"params":{"chestId":2},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' +  sign + '"}'
         r = requests.post(url, data=data, headers=headers)
         r = r.json()
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            if (r['error']['text'] == 'object wait a new level'):
+                self.stageUpObject('winterMaiden')
+            return r['error']['text']
 
         if ('data' in r):
             if ('award' in r['data']):
