@@ -5,6 +5,7 @@ import random
 class Elochka:
     sessionKey = 'ac145905ef88688480751b733397774b3551877b'
     version = '19'
+    logfile = 'LOG FILE'
 
     mainHeaders = {
         'Host': 'elka2020-server-vk.ereality.org',
@@ -37,9 +38,9 @@ class Elochka:
             'ERROR': '\033[31mERROR:\033[0m',
             'WARNING': '\033[35mWARNING:\033[0m',
         }
-
-        log = open('./elka.log', 'w')
-        log.write(LOG_TYPE[type] + ' ' + str(msg))
+        self.logfile = open('./elka.log', 'a')
+        self.logfile.write(LOG_TYPE[type] + ' ' + str(msg) + '\n\r')
+        self.logfile.close()
         print(LOG_TYPE[type] + ' ' + str(msg))
 
     def notifyMe(self, msg):
