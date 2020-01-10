@@ -2,3 +2,4 @@ test.*
 credentials.json
 *.pyc
 *.log
+test
