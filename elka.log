@@ -1,1 +1,8 @@
 
+[32mSUCCESS:[0m I collected 325 energy.
+Now there is 81797 energy
+[32mSUCCESS:[0m {'collected': 325, 'currentEnergy': 81797, 'hasErrors': False}
+[32mSUCCESS:[0m I collected 29 energy.
+Now there is 81826 energy
+[32mSUCCESS:[0m {'collected': 29, 'currentEnergy': 81826, 'hasErrors': False}
+

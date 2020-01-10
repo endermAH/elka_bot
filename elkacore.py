@@ -1,11 +1,13 @@
 import requests
 import time
 import random
+import json
 
 class Elochka:
-    sessionKey = 'ac145905ef88688480751b733397774b3551877b'
+    sessionKey = ''
     version = '19'
     logfile = 'LOG FILE'
+    secretoryToken = ''
 
     mainHeaders = {
         'Host': 'elka2020-server-vk.ereality.org',
@@ -19,6 +21,12 @@ class Elochka:
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     }
+
+    def __init__(self):
+        credentialsFile = open('./credentials.json')
+        credentials = json.loads(credentialsFile.read())
+        self.sessionKey = credentials['sessionKey']
+        self.secretoryToken = credentials['secretory_token']
 
     def __parceOpEnergy(self, op):
         for i in range(0,4):
@@ -45,7 +53,7 @@ class Elochka:
 
     def notifyMe(self, msg):
         random_id = random.randrange(0,100000,1)
-        url = 'https://api.vk.com/method/messages.send?peer_id=225299625&random_id=' + str(random_id) + '&message=' + msg + '&access_token=85681fa2463297bc96226c3e4070e4eecf0654fdd088ec266697505cde91b86b8ef0c33303caf5ced2ae7&v=5.103'
+        url = 'https://api.vk.com/method/messages.send?peer_id=225299625&random_id=' + str(random_id) + '&message=' + msg + '&access_token=' + self.secretoryToken + '&v=5.103'
         responce = requests.get(url)
         print(responce.content)
 
@@ -114,7 +122,7 @@ class Elochka:
             'hasErrors': (error != '')
         }
 
-        message = 'I collected ' + str(resp['collected']) + ' energy.\n\r Now there is ' + str(resp['currentEnergy']) + ' energy'
+        message = 'I collected ' + str(resp['collected']) + ' energy.\n\rNow there is ' + str(resp['currentEnergy']) + ' energy'
         self.log('SUCCESS', message)
         self.notifyMe(message)
 
