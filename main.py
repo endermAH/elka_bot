@@ -213,7 +213,7 @@ while (True):
     if (resp['award'] == 'no award' or resp['award'] == 'no data'):
         message = 'I\'ve tried to open the chest, but there is no award :('
     else:
-        massage = 'I\'ve opened the chest: \n\r Snow:' + str(resp['award']['resource']['money1']) + '\n\r Energy: ' + str(resp['award']['resource']['energy']) + '\n\r Diamonds: ' + str(resp['award']['resource']['cash']) + '\n\r Keys: ' + str(resp['award']['resource']['keys'])
+        massage = 'I\'ve opened the chest: \n\r Snow:' + str(resp['resource']['money1']) + '\n\r Energy: ' + str(resp['resource']['energy']) + '\n\r Diamonds: ' + str(resp['resource']['cash']) + '\n\r Keys: ' + str(resp['resource']['keys'])
     el.notifyMe(message)
 
     resp = el.factoryExchange()
