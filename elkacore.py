@@ -29,10 +29,10 @@ class Elochka:
         self.sessionKey = credentials['sessionKey']
         self.secretoryToken = credentials['secretory_token']
 
-    def __parceOpEnergy(self, op):
-        for i in range(0,4):
+    def __parceOpResource(self, op, res):
+        for i in op:
             if (str(i) in op):
-                if (op[str(i)]['path'] == '/resource/energy'):
+                if (op[str(i)]['path'] == '/resource/' + res):
                     return op[str(i)]['value']
         return 'unknown'
 
@@ -167,7 +167,7 @@ class Elochka:
             self.__causeError(error, r)
 
         if ('op' in r):
-            currentEnergy = self.__parceOpEnergy(r['op'])
+            currentEnergy = self.__parceOpResource(r['op'], 'energy')
         else:
             self.__causeError('No "op" field in responce', r)
             currentEnergy = 'unknown'
@@ -245,7 +245,7 @@ class Elochka:
             return False
 
         if ('op' in r):
-            currentEnergy = self.__parceOpEnergy(r['op'])
+            currentEnergy = self.__parceOpResource(r['op'], 'energy')
         else:
             self.__causeError('No "op" field in responce', r)
             currentEnergy = 'unknown'
@@ -307,6 +307,76 @@ class Elochka:
         else:
             message = 'I\'ve opened the chest: \n\r Snow:' + str(resp['award']['resource']['money1']) + '\n\r Energy: ' + str(resp['award']['resource']['energy']) + '\n\r Diamonds: ' + str(resp['award']['resource']['cash']) + '\n\r Keys: ' + str(resp['award']['resource']['keys'])
             self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+        return resp
+
+    def stageUpWolf(self):
+        sign = '5da319d1338f1264d00a191b6c6c4dbb'
+        url = 'https://elka2020-server-vk.ereality.org/animal/stageUp'
+        headers = self.mainHeaders
+        headers.update({
+            'Content-Length': '251',
+            'Referer': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=6b242ea2cb97bb00f6044a70ca21757a1e772092bc08d2c4bfb39905464e09015ce92031a3d9b793de9cc&secret=dd30cb295a&access_token=4c5db7a80c4f27b495d398fa081935ac77092992c9078570d71b097149abca31232441e27d12f89d148f7&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_11c2bc5d4b01bb73ee&referrer=unknown&lc_name=dade34fa&platform=web&hash='
+        })
+
+        data = '{"params":{"animalId":1},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign + '"}'
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            return False
+
+        resp = {
+            'r': r
+        }
+
+        message = 'Your wolf staged up!'
+        self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+    def actionWolf(self, actionId):
+        sign = {
+            '1': '647c36dd0b1abe233ba3aba90d3d9996', #feed
+            '2': 'f953eff0d5b1c47b4ec8398acdcd7e15', #sleep
+            '3': '3673bf885d8662f92ea41166d537b124', #play
+        }
+        url = 'https://elka2020-server-vk.ereality.org/animal/start'
+        headers = self.mainHeaders
+        headers.update({
+            'Content-Length': '264',
+            'Referer': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=6b242ea2cb97bb00f6044a70ca21757a1e772092bc08d2c4bfb39905464e09015ce92031a3d9b793de9cc&secret=dd30cb295a&access_token=4c5db7a80c4f27b495d398fa081935ac77092992c9078570d71b097149abca31232441e27d12f89d148f7&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_11c2bc5d4b01bb73ee&referrer=unknown&lc_name=dade34fa&platform=web&hash='
+        })
+
+        data = '{"params":{"animalId":1,"actionId":' + actionId + '},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign[actionId] + '"}'
+
+        r = requests.post(url, data=data, headers=headers)
+        r = r.json()
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            if (r['error']['text'] == 'object wait a new level'):
+                self.stageUpWolf()
+            return False
+
+        if ('op' in r):
+            currentSnow = self.__parceOpResource(r['op'], 'money1')
+        else:
+            self.__causeError('No "op" field in responce', r)
+            currentSnow = 'unknown'
+
+        resp = {
+            'r': r,
+            'currentSnow': currentSnow
+        }
+
+        actionName = {
+        '1': 'feeded',
+        '2': 'sleeped',
+        '3': 'played',
+        }
+
+        message = 'I had ' + actionName[actionId] + ' your wolf'
+        self.log('SUCCESS', message)
         self.notifyMe(message)
 
         return resp
