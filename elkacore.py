@@ -382,3 +382,58 @@ class Elochka:
         self.notifyMe(message)
 
         return resp
+
+    def openBox(self, boxId):
+        sign = {
+            '1': '1d94dddb83849d41b565d74741bd9073',
+            '2': 'fc8834b12d4903e50485ec60b64d8285',
+            '3': '',
+        }
+
+        boxName = {
+        '1': 'little',
+        '2': 'middle',
+        '3': 'gold',
+        }
+
+        url = 'https://elka2020-server-vk.ereality.org/box/open'
+        headers = self.mainHeaders
+        headers.update({
+            'Content-Length': '250',
+            'Referer': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=6b242ea2cb97bb00f6044a70ca21757a1e772092bc08d2c4bfb39905464e09015ce92031a3d9b793de9cc&secret=dd30cb295a&access_token=4c5db7a80c4f27b495d398fa081935ac77092992c9078570d71b097149abca31232441e27d12f89d148f7&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_11c2bc5d4b01bb73ee&referrer=unknown&lc_name=dade34fa&platform=web&hash='
+        })
+
+        data = '{"params":{"boxId":"' + boxId + '"},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign[boxId] + '"}'
+
+        r = requests.post(url, data=data, headers=headers)
+        r = r.json()
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            self.notifyMe('I tried to open ' + boxName[boxId] + ' , but - ' + r['error']['text'])
+            return False
+
+        if ('op' in r):
+            currentBox = self.__parceOpResource(r['op'], 'box1')
+        else:
+            self.__causeError('No "op" field in responce', r)
+            currentBox = 'unknown'
+
+        message = 'I opened ' + boxName[boxId] + ' and got this award:\n\r'
+        if ('data' in r):
+            for i in r['data']:
+                for j in r['data'][i]['resource']:
+                    message += j + ': ' +  str(r['data'][i]['resource'][j]) + '\n\r'
+        else:
+            message = 'Data loss sorry :('
+            return False
+
+        self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+        resp = {
+            'currentBox': currentBox,
+            'r': r
+        }
+
+        return resp

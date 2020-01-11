@@ -63,6 +63,15 @@ def careWolf():
             waitHours = 8
         time.sleep(60*60*waitHours+60)
 
+def collectBoxes():
+    while(True):
+        for i in range(1,3):
+            resp = el.openBox(str(i))
+            if (resp and resp['currentBox'] > 0):
+                for j in range(0, resp['currentBox']):
+                    r = el.openBox(str(i))
+        time.sleep(60*60*2)
+
 signal.signal(signal.SIGTERM, sigterm_handler)
 signal.signal(signal.SIGINT, sigint_handler)
 
@@ -83,6 +92,10 @@ energyThread.start()
 careThread = Thread(target=careWolf)
 careThread.daemon = True
 careThread.start()
+
+boxThread = Thread(target=collectBoxes)
+boxThread.daemon = True
+boxThread.start()
 
 while True:
     i = 0
