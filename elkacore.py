@@ -340,6 +340,13 @@ class Elochka:
             '2': 'f953eff0d5b1c47b4ec8398acdcd7e15', #sleep
             '3': '3673bf885d8662f92ea41166d537b124', #play
         }
+
+        actionName = {
+        '1': 'feed',
+        '2': 'sleep',
+        '3': 'play',
+        }
+
         url = 'https://elka2020-server-vk.ereality.org/animal/start'
         headers = self.mainHeaders
         headers.update({
@@ -356,6 +363,7 @@ class Elochka:
             self.__causeError(r['error']['text'], r)
             if (r['error']['text'] == 'object wait a new level'):
                 self.stageUpWolf()
+            self.notifyMe('I tried to ' + actionName[actionId] + ' your wolf, but this ' + r['error']['text'])
             return False
 
         if ('op' in r):
@@ -369,13 +377,7 @@ class Elochka:
             'currentSnow': currentSnow
         }
 
-        actionName = {
-        '1': 'feeded',
-        '2': 'sleeped',
-        '3': 'played',
-        }
-
-        message = 'I had ' + actionName[actionId] + ' your wolf'
+        message = 'I had ' + actionName[actionId] + 'ed your wolf'
         self.log('SUCCESS', message)
         self.notifyMe(message)
 

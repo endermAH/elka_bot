@@ -47,7 +47,21 @@ def collectAndSpendEnergy():
             el.notifyMe(message)
         else:
             continue
-        time.sleep(60*30)
+        time.sleep(60*60)
+
+def careWolf():
+    waitHours = 1
+    while(True):
+        resp = el.actionWolf('1')
+        if (resp and (waitHours > 4 or waitHours == 1)):
+            waitHours = 4
+        resp = el.actionWolf('2')
+        if (resp and (waitHours > 4 or waitHours == 1)):
+            waitHours = 8
+        resp = el.actionWolf('3')
+        if (resp and (waitHours > 4 or waitHours == 1)):
+            waitHours = 8
+        time.sleep(60*60*waitHours+60)
 
 signal.signal(signal.SIGTERM, sigterm_handler)
 signal.signal(signal.SIGINT, sigint_handler)
@@ -65,6 +79,10 @@ chestsThread.start()
 energyThread = Thread(target=collectAndSpendEnergy)
 energyThread.daemon = True
 energyThread.start()
+
+careThread = Thread(target=careWolf)
+careThread.daemon = True
+careThread.start()
 
 while True:
     i = 0
