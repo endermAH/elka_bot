@@ -9,6 +9,7 @@ class Elochka:
     logfile = 'LOG FILE'
     secretoryToken = ''
     myId = '225299625'
+    logPath = ''
 
     mainHeaders = {
         'Host': 'elka2020-server-vk.ereality.org',
@@ -28,6 +29,7 @@ class Elochka:
         credentials = json.loads(credentialsFile.read())
         self.sessionKey = credentials['sessionKey']
         self.secretoryToken = credentials['secretory_token']
+        self.logPath = credentials['logPath']
 
     def __parceOpResource(self, op, res):
         for i in op:
@@ -98,7 +100,7 @@ class Elochka:
             'ERROR': '\033[31mERROR:\033[0m',
             'WARNING': '\033[35mWARNING:\033[0m',
         }
-        self.logfile = open('./elka.log', 'a')
+        self.logfile = open(self.logPath, 'a')
         self.logfile.write(LOG_TYPE[type] + ' ' + str(msg) + '\n\r')
         self.logfile.close()
         print(LOG_TYPE[type] + ' ' + str(msg))
