@@ -33,6 +33,7 @@ def collectChests():
 #My school teacher sayd that infinit loops are evil... Am I evil?
 
 def collectAndSpendEnergy():
+    time.sleep(5)
     while (True):
         resp = el.totalExchange('energy')
         resp = el.factoryExchange()
@@ -58,6 +59,7 @@ def collectAndSpendEnergy():
         time.sleep(60*60)
 
 def careWolf():
+    time.sleep(10)
     waitHours = 1
     while(True):
         resp = el.totalExchange('snow')
@@ -78,6 +80,7 @@ def careWolf():
         time.sleep(60*60*waitHours+60)
 
 def collectBoxes():
+    time.sleep(15)
     while(True):
         for i in range(1,2):
             resp = el.openBox(str(i))
