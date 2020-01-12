@@ -10,6 +10,7 @@ class Elochka:
     secretoryToken = ''
     myId = '225299625'
     logPath = ''
+    enableNotifying = 'True'
 
     mainHeaders = {
         'Host': 'elka2020-server-vk.ereality.org',
@@ -24,12 +25,15 @@ class Elochka:
         'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     }
 
-    def __init__(self):
-        credentialsFile = open('./credentials.json')
+    def __init__(self, enableNotifying, credentialsPath):
+        credentialsFile = open(credentialsPath)
         credentials = json.loads(credentialsFile.read())
         self.sessionKey = credentials['sessionKey']
         self.secretoryToken = credentials['secretory_token']
         self.logPath = credentials['logPath']
+        self.enableNotifying = enableNotifying
+        message = 'Elka bot job started.'
+        self.notifyMe(message)
 
     def __parceOpResource(self, op, res):
         for i in op:
@@ -43,7 +47,7 @@ class Elochka:
 
     def stageUpObject(self, object):
         sign = {
-            'winterMaiden': '6051a859ba82429570bf8fe7fed4d729'
+            'winterMaiden': '500f02ba1b759f3bd4764e83050bc401'
         }
 
         url = 'https://elka2020-server-vk.ereality.org/object/stageUp'
@@ -106,10 +110,11 @@ class Elochka:
         print(LOG_TYPE[type] + ' ' + str(msg))
 
     def notifyMe(self, msg):
-        random_id = random.randrange(0,100000,1)
-        url = 'https://api.vk.com/method/messages.send?peer_id=' + self.myId + '&random_id=' + str(random_id) + '&message=' + msg + '&access_token=' + self.secretoryToken + '&v=5.103'
-        responce = requests.get(url)
-        print(responce.content)
+        if (self.enableNotifying == 'True'):
+            random_id = random.randrange(0,100000,1)
+            url = 'https://api.vk.com/method/messages.send?peer_id=' + self.myId + '&random_id=' + str(random_id) + '&message=' + msg + '&access_token=' + self.secretoryToken + '&v=5.103'
+            responce = requests.get(url)
+            print(responce.content)
 
     def getSessionKey(self):
         url = 'https://elka2020-server-vk.ereality.org/canvas/show?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=9090c6a092e51714593c9550cb7e74edbead0f63d9334546224f80914079665b680307feddd0d99374e2f&secret=932fa69ab4&access_token=828ebf001e29d563422c4f94e4d3a5269fa01f59cdf30f2b7b2669983dbe4fbd3806f7fcf61bbad9425ae&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_4d9f4d4083fdfa1e36&referrer=unknown&lc_name=92c0bd26&platform=web&hash='
@@ -131,7 +136,7 @@ class Elochka:
         self.sessionKey = r['sessionKey']
 
     def factoryExchange(self):
-        sign = '7437ad085d5eb02b131c52be815648cd'
+        sign = '42e808ab34ded6d5351245f8c21fca38'
         url = 'https://elka2020-server-vk.ereality.org/generator/exchange'
         headers = self.mainHeaders
         headers.update({
@@ -187,28 +192,34 @@ class Elochka:
         return resp
 
     def totalExchange(self, resource):
-        referer = {
-            'energy': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=2&sid=3ac422480242450d97a53ed87f644b870e02591b2eeb51d11d318a4fa1e8f8f27a346756b773f45170e76&secret=ceaf4d1309&access_token=afec406c2f63b75313021a08cdbfcdc8391719f47254fe98f99fc391f944f260c0636aba643602b41a871&user_id=225299625&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_4d9f4d4083fdfa1e36&referrer=unknown&lc_name=71eb096e&platform=web&hash=',
-            'ruby': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=2&sid=3ac422480242450d97a53ed87f644b870e02591b2eeb51d11d318a4fa1e8f8f27a346756b773f45170e76&secret=ceaf4d1309&access_token=afec406c2f63b75313021a08cdbfcdc8391719f47254fe98f99fc391f944f260c0636aba643602b41a871&user_id=225299625&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_4d9f4d4083fdfa1e36&referrer=unknown&lc_name=71eb096e&platform=web&hash=',
-            'snow': '',
-            'coin': ''
-        }
         sign = {
-            'energy': '408d8b5d6d3bde46ec6e46bd0f73d4f4',
-            'ruby': 'a0850c410bbfa9d99246e03646eecf7d',
-            'snow': '',
+            'energy': 'cab6fb1786c2dbca452be2caa52463f5',
+            'ruby': 'a0850c410bbfa9d99246e03646eecf7d', # not True!!!
+            'snow': '32f7730d2a485944f89aa3fb5f394043',
             'coin': ''
         }
         contentLength = {
             'energy': '261',
             'ruby': '',
-            'snow': '',
+            'snow': '260',
             'coin': ''
         }
         name = {
             'energy': 'winterFactory',
             'ruby': 'designObject1',
-
+            'snow': 'winterMaiden'
+        }
+        trueNames = {
+            'energy': 'energy',
+            'ruby': 'cash',
+            'snow': 'money1',
+            'coin': 'coins'
+        }
+        referer = {
+            'energy': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=7b30cec28e120c3d05539e88b40767794209576d1c1414b627e29f8cbcbfbd9a7bc61aef81420d4d7886d&secret=102dbcee88&access_token=057bd34cf38ff6e67bc06ee903cda2f4195878cdf04b287006ab9a9dbd583723492624df00f5c6d38f1f4&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_6108e538eacd7a56e9&referrer=unknown&lc_name=6f6e3ed2&platform=web&hash=',
+            'ruby': '',
+            'snow': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=7b30cec28e120c3d05539e88b40767794209576d1c1414b627e29f8cbcbfbd9a7bc61aef81420d4d7886d&secret=102dbcee88&access_token=057bd34cf38ff6e67bc06ee903cda2f4195878cdf04b287006ab9a9dbd583723492624df00f5c6d38f1f4&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_6108e538eacd7a56e9&referrer=unknown&lc_name=6f6e3ed2&platform=web&hash=',
+            'coin': ''
         }
         url = 'https://elka2020-server-vk.ereality.org/generator/exchange'
         headers = self.mainHeaders
@@ -216,18 +227,49 @@ class Elochka:
             'Referer': referer[resource],
             'Content-Length': contentLength[resource],
             })
-        data = '{"params":{"name":"' + name[resource] + '"},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":18,"clientPlatform":"js","sign":"' + sign[resource] + '"}'
+        data = '{"params":{"name":"' + name[resource] + '"},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign[resource] + '"}'
+
         r = requests.post(url, data=data, headers=headers)
         r = r.json()
-        print(r)
-        data = {
-            'get': r['data']['award']['resource']['energy'],
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            return False
+
+        error = ''
+
+        if ('data' in r):
+            if ('award' in r['data']):
+                if ('resource' in r['data']['award']):
+                    if ('energy' in r['data']['award']['resource']):
+                        collected = r['data']['award']['resource'][trueNames[resource]]
+                    else:
+                        error += 'little error'
+                else:
+                     error += 'resource error'
+            else:
+                 error += 'award error'
+        else:
+            error += 'data error'
+
+        if (error != ''):
+            self.__causeError(error, r)
+            return False
+
+        resp = {
+            'get': collected,
+            'r': r
         }
-        return data
+
+        message = 'I collected ' + str(collected) + ' ' + resource
+        self.log('SUCCESS', message)
+        self.notifyMe(message)
+
+        return resp
 
     def useEnergyOnce(self):
-        count = 45
-        sign = '35107974142b57ddefaa3cee0991d0eb'
+        count = 32
+        sign = 'd0d5479233f9a3842669beeae2b57a05'
         url = 'https://elka2020-server-vk.ereality.org/object/useEnergy'
         headers = self.mainHeaders
         headers.update({
@@ -271,7 +313,7 @@ class Elochka:
         return data
 
     def openChest(self):
-        sign = '477b818da66f35015b8356520ee12d02'
+        sign = '0727c0000d89f2ab121584ba45f258ae'
         url = 'https://elka2020-server-vk.ereality.org/chest/open'
         headers = self.mainHeaders
         headers.update({
@@ -314,7 +356,7 @@ class Elochka:
         return resp
 
     def stageUpWolf(self):
-        sign = '5da319d1338f1264d00a191b6c6c4dbb'
+        sign = 'eee6b67a41cd51f616e75daf6c81b3e3'
         url = 'https://elka2020-server-vk.ereality.org/animal/stageUp'
         headers = self.mainHeaders
         headers.update({
@@ -338,9 +380,9 @@ class Elochka:
 
     def actionWolf(self, actionId):
         sign = {
-            '1': '647c36dd0b1abe233ba3aba90d3d9996', #feed
-            '2': 'f953eff0d5b1c47b4ec8398acdcd7e15', #sleep
-            '3': '3673bf885d8662f92ea41166d537b124', #play
+            '1': '5418409abf16fbc98d47ffe65f8d1901', #feed
+            '2': 'e367b74ffe33c3d9d14667f5de2e5450', #sleep
+            '3': 'b4fb93fc2ee0087fd202b084b485c98d', #play
         }
 
         actionName = {
@@ -387,7 +429,7 @@ class Elochka:
 
     def openBox(self, boxId):
         sign = {
-            '1': '1d94dddb83849d41b565d74741bd9073',
+            '1': 'e6753e25c1f78b86eb93194219cc5b90',
             '2': 'fc8834b12d4903e50485ec60b64d8285',
             '3': '',
         }
@@ -437,5 +479,41 @@ class Elochka:
             'currentBox': currentBox,
             'r': r
         }
+
+        return resp
+
+    def boostWoolf(self):
+        sign = '630ab24560d291205e4e8ebf54322438'
+        url = 'https://elka2020-server-vk.ereality.org/animal/boost'
+        headers = self.mainHeaders
+        headers.update({
+            'Content-Length': '264',
+            'Referer': 'https://elka2020-client-vk.ereality.org/?api_url=https://api.vk.com/api.php&api_id=7113532&api_settings=2368775&viewer_id=225299625&viewer_type=0&sid=7b30cec28e120c3d05539e88b40767794209576d1c1414b627e29f8cbcbfbd9a7bc61aef81420d4d7886d&secret=102dbcee88&access_token=057bd34cf38ff6e67bc06ee903cda2f4195878cdf04b287006ab9a9dbd583723492624df00f5c6d38f1f4&user_id=0&group_id=0&is_app_user=1&auth_key=a8d561b58babc3b79218936fa82a0684&language=0&parent_language=0&is_secure=1&stats_hash=1dfee73734f66879bf&ads_app_id=7113532_6108e538eacd7a56e9&referrer=unknown&lc_name=6f6e3ed2&platform=web&hash='
+        })
+
+        data = '{"params":{"animalId":1,"actionId":3},"uid":125744,"suid":"225299625","aid":"7113532","authKey":"de7afe2878276a4091b89bd70ee1d9d1","sessionKey":"' + self.sessionKey + '","version":' + self.version + ',"clientPlatform":"js","sign":"' + sign + '"}'
+
+        r = requests.post(url, data=data, headers=headers)
+        r = r.json()
+
+        if ('error' in r):
+            self.__causeError(r['error']['text'], r)
+            self.notifyMe('I tried to boost sleeping your wolf, but this ' + r['error']['text'])
+            return False
+
+        if ('op' in r):
+            currentSnow = self.__parceOpResource(r['op'], 'money1')
+        else:
+            self.__causeError('No "op" field in responce', r)
+            currentSnow = 'unknown'
+
+        resp = {
+            'r': r,
+            'currentSnow': currentSnow
+        }
+
+        message = 'I had boosted sleeping your wolf'
+        self.log('SUCCESS', message)
+        self.notifyMe(message)
 
         return resp
